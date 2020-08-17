@@ -1,18 +1,17 @@
 # This script records speech/sound from devices, recognizes what is said and writes to a document
 # Is was written 100% accordingly to PEP 8
 
-import speech_recognition as sr  # version 3.8.1
 import sys
 import os
 import queue
 import argparse
 import sounddevice as sd  # 0.4.0
 import soundfile as sf  # 0.10.3
+import speech_recognition as sr  # version 3.8.1
 from threading import Thread
 from datetime import datetime
 from tkinter import Tk, Label, Button, StringVar, CENTER  # 8.6
 import numpy as np  # Not used, but needed for soundfile; version 1.19.0
-
 assert np
 
 
