@@ -1,10 +1,7 @@
 # This script records speech/sound from devices, recognizes what is said and writes to a document
 # Is was written 100% accordingly to PEP 8
 
-import sys
-import os
-import queue
-import argparse
+import argparse, sys, os, queue
 import sounddevice as sd  # 0.4.0
 import soundfile as sf  # 0.10.3
 import speech_recognition as sr  # version 3.8.1
