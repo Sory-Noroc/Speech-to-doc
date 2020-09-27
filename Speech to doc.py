@@ -1,7 +1,10 @@
 # This script records speech/sound from devices, recognizes what is said and writes to a document
 # Is was written 100% accordingly to PEP 8
 
-import argparse, sys, os, queue
+import argparse
+import sys
+import os
+import queue
 import sounddevice as sd  # 0.4.0
 import soundfile as sf  # 0.10.3
 import speech_recognition as sr  # version 3.8.1
@@ -15,12 +18,11 @@ assert np
 class Gui:
     def __init__(self, mw):
         self.mw = mw
-
         mw.title('Speech to text')  # GUI Title
         width, height = 500, 75
-        x = (mw.winfo_screenwidth() // 2) - (width // 2)
-        y = (mw.winfo_screenheight() // 2) - (height // 2)
-        mw.geometry(f'{width}x{height}+{x}+{y}')  # GUI sizing
+        x = (self.mw.winfo_screenwidth() // 2) - (width // 2)
+        y = (self.mw.winfo_screenheight() // 2) - (height // 2)
+        self.mw.geometry(f'{width}x{height}+{x}+{y}')  # GUI sizing
 
         # Making and placing the widgets
         self.start_button = Button(mw, text="Start", command=self.start_rec)
@@ -46,32 +48,23 @@ class Gui:
             except ValueError:
                 return text
 
-        def callback(indata, *arguments):  # This is called for every audio segment
-            assert arguments
+        def callback(indata, *args):  # This is called for every audio segment
+            assert args
             self.progression.put(indata.copy())
 
         parser = argparse.ArgumentParser(add_help=False)
-        parser.add_argument(
-            '-l', '--list-devices', action='store_true',
-            help='show list of audio devices and exit')
+        parser.add_argument('-l', '--list-devices', action='store_true')  # show list of audio devices and exit
 
         args, remaining = parser.parse_known_args()
 
         parser = argparse.ArgumentParser(
             formatter_class=argparse.RawDescriptionHelpFormatter,
             parents=[parser])
-        parser.add_argument(
-            'filename', nargs='?', metavar='FILENAME',
-            help='audio file to store recording to')
-        parser.add_argument(
-            '-d', '--device', type=int_or_str,
-            help='input device (numeric ID or substring)')
-        parser.add_argument(
-            '-r', '--samplerate', type=int, help='sampling rate')
-        parser.add_argument(
-            '-c', '--channels', type=int, default=1, help='number of input channels')
-        parser.add_argument(
-            '-t', '--subtype', type=str, help='sound file subtype (e.g. "PCM_24")')
+        parser.add_argument('filename', nargs='?', metavar='FILENAME')  # audio file to store recording to
+        parser.add_argument('-d', '--device', type=int_or_str)  # input device (numeric ID or substring)
+        parser.add_argument('-r', '--samplerate', type=int)  # sampling rate
+        parser.add_argument('-c', '--channels', type=int, default=1)  # number of input channels
+        parser.add_argument('-t', '--subtype', type=str)  # sound file subtype (e.g. "PCM_24")
         args = parser.parse_args(remaining)
 
         if not args.samplerate:
@@ -82,7 +75,7 @@ class Gui:
             args.filename = 'temporary_file.wav'
 
         thread = Thread(target=self.record_and_recognize, args=(args, callback))
-        thread.setDaemon(True)
+        thread.setDaemon(True)  # To avoid an infinite loop out of control
         thread.start()
 
     def stop_rec(self):
