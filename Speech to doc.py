@@ -110,7 +110,7 @@ class Gui:
         else:
             self.labeltext.set('Recognizing...')
             try:
-                speech_text = recognizer.recognize_sphinx(audio)  # Taking the words from audio
+                speech_text = recognizer.recognize_sphinx(audio)  # Taking the words from audio and recognizing
             except sr.UnknownValueError:
                 self.labeltext.set("Can't Understand")
             else:
