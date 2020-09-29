@@ -42,16 +42,6 @@ class Gui:
     def start_rec(self):
         self.labeltext.set('Started recording')
 
-        def int_or_str(text):  # Helper function for argument parsing
-            try:
-                return int(text)
-            except ValueError:
-                return text
-
-        def callback(indata, *args):  # This is called for every audio segment
-            assert args
-            self.progression.put(indata.copy())
-
         parser = argparse.ArgumentParser(add_help=False)
         parser.add_argument('-l', '--list-devices', action='store_true')  # show list of audio devices and exit
 
@@ -61,7 +51,7 @@ class Gui:
             formatter_class=argparse.RawDescriptionHelpFormatter,
             parents=[parser])
         parser.add_argument('filename', nargs='?', metavar='FILENAME')  # audio file to store recording to
-        parser.add_argument('-d', '--device', type=int_or_str)  # input device (numeric ID or substring)
+        parser.add_argument('-d', '--device', type=self.int_or_str)  # input device (numeric ID or substring)
         parser.add_argument('-r', '--samplerate', type=int)  # sampling rate
         parser.add_argument('-c', '--channels', type=int, default=1)  # number of input channels
         parser.add_argument('-t', '--subtype', type=str)  # sound file subtype (e.g. "PCM_24")
@@ -74,9 +64,19 @@ class Gui:
         if not args.filename:
             args.filename = 'temporary_file.wav'
 
-        thread = Thread(target=self.record_and_recognize, args=(args, callback))
+        thread = Thread(target=self.record_and_recognize, args=(args, self.callback))
         thread.setDaemon(True)  # To avoid an infinite loop out of control
         thread.start()
+
+    def int_or_str(self, text):  # Helper function for argument parsing
+        try:
+            return int(text)
+        except ValueError:
+            return text
+
+    def callback(self, indata, *args):  # This is called for every audio segment
+        assert args
+        self.progression.put(indata.copy())
 
     def stop_rec(self):
 
