@@ -96,8 +96,8 @@ class Gui:
 
         # Starting the recognizing process
         recognizer = sr.Recognizer()
-        with open('temporary_file.wav', 'rb') as file:  # Getting the content from the created wav file
-            speech = sr.AudioFile(file)
+        file = open('temporary_file.wav', 'rb')  # Getting the content from the created wav file
+        speech = sr.AudioFile(file)
 
         try:
             with speech as source:
@@ -108,7 +108,7 @@ class Gui:
             self.labeltext.set('Audio file empty!')
 
         else:
-            self.labeltext.set('Recognizing...')
+            self.labeltext.set('Recognizing... Wait')
             try:
                 speech_text = recognizer.recognize_sphinx(audio)  # Taking the words from audio and recognizing
             except sr.UnknownValueError:
@@ -120,6 +120,7 @@ class Gui:
                     self.labeltext.set('Finished!')
                 else:
                     self.labeltext.set('Finished! But no word was written...')
+        file.close()
         os.remove('temporary_file.wav')  # To avoid junk files
 
     def on_closing(self):  # To prevent infinite loop threads
