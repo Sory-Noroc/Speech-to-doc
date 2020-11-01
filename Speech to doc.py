@@ -1,5 +1,5 @@
 # This script records speech/sound from devices, recognizes what is said and writes to a document
-# Is was written 100% accordingly to PEP 8
+# It was written 100% accordingly to PEP 8
 
 import argparse
 import sys
