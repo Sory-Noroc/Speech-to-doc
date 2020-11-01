@@ -16,13 +16,16 @@ assert np
 
 
 class Gui:
+    ''' 
+    The user interface of the program. A small, simple GUI with 2 buttons that makes the connection between the user and the actual program
+    '''
     def __init__(self, mw):
-        self.mw = mw
         mw.title('Speech to text')  # GUI Title
         width, height = 500, 75
+        # Next, we position the GUI in the middle of the screen, so it adjusts based on it's size
         x = (self.mw.winfo_screenwidth() // 2) - (width // 2)
         y = (self.mw.winfo_screenheight() // 2) - (height // 2)
-        self.mw.geometry(f'{width}x{height}+{x}+{y}')  # GUI sizing
+        mw.geometry(f'{width}x{height}+{x}+{y}')  # GUI sizing
 
         # Making and placing the widgets
         self.start_button = Button(mw, text="Start", command=self.start_rec)
@@ -31,7 +34,7 @@ class Gui:
         self.stop_button = Button(mw, text="Stop", command=self.stop_rec)
         self.stop_button.place(x=250, y=10)
 
-        self.labeltext = StringVar()
+        self.labeltext = StringVar()  # Making the label prone to rewriting
         self.label = Label(mw, textvariable=self.labeltext, anchor=CENTER, width=30)
         self.label.place(x=125, y=40)
         self.labeltext.set("Press 'Start' to initiate the recording")
@@ -41,7 +44,7 @@ class Gui:
 
     def start_rec(self):
         self.labeltext.set('Started recording')
-
+        # Getting the information about the user's devices for further use
         parser = argparse.ArgumentParser(add_help=False)
         parser.add_argument('-l', '--list-devices', action='store_true')  # show list of audio devices and exit
 
@@ -63,7 +66,8 @@ class Gui:
             args.samplerate = int(device_info['default_samplerate'])
         if not args.filename:
             args.filename = 'temporary_file.wav'
-
+        
+        # Next we make the thread that will record the audio in background, started by the button
         thread = Thread(target=self.record_and_recognize, args=(args, self.callback))
         thread.setDaemon(True)  # To avoid an infinite loop out of control
         thread.start()
